@@ -54,3 +54,9 @@ struct ExercisePickerView: View {
         }
     }
 }
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    return ExercisePickerView(onSelect: { _ in })
+        .modelContainer(container)
+}
