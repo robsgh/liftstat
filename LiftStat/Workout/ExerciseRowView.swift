@@ -5,6 +5,7 @@ struct ExerciseRowView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var workoutExercise: WorkoutExercise
     var focusedField: FocusState<FocusedField?>.Binding
+    var onCompleted: () -> Void = {}
 
     private var lastSets: [LoggedSet] {
         let exercise = workoutExercise.exercise
@@ -41,7 +42,8 @@ struct ExerciseRowView: View {
                     ghostWeight: ghost?.weight,
                     ghostReps: ghost?.reps,
                     focusedField: focusedField,
-                    exercise: workoutExercise.exercise
+                    exercise: workoutExercise.exercise,
+                    onCompleted: onCompleted
                 )
                 .padding(.vertical, 2)
             }

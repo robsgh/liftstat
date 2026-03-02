@@ -9,6 +9,7 @@ enum FocusedField: Hashable {
 struct LoggedSetRowView: View {
     @Environment(ActiveWorkoutStore.self) private var store
     @Environment(\.modelContext) private var modelContext
+    @Environment(KeyboardActions.self) private var keyboardActions
 
     @Bindable var set: LoggedSet
     let setNumber: Int
@@ -16,6 +17,7 @@ struct LoggedSetRowView: View {
     let ghostReps: Int?
     var focusedField: FocusState<FocusedField?>.Binding
     var exercise: Exercise?
+    var onCompleted: () -> Void = {}
 
     @State private var weightText: String = ""
     @State private var repsText: String = ""
@@ -33,6 +35,16 @@ struct LoggedSetRowView: View {
     private var repsPrompt: String {
         if let g = ghostReps, g > 0 { return "\(g)" }
         return "reps"
+    }
+
+    private var ghostDisplayWeight: Double? {
+        guard let g = ghostWeight, g > 0 else { return nil }
+        return useKg ? g * 0.453592 : g
+    }
+
+    private var isFieldFocused: Bool {
+        focusedField.wrappedValue == .weight(set.persistentModelID) ||
+        focusedField.wrappedValue == .reps(set.persistentModelID)
     }
 
     var body: some View {
@@ -64,6 +76,7 @@ struct LoggedSetRowView: View {
 
             Button {
                 completeSet()
+                onCompleted()
             } label: {
                 Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
                     .foregroundStyle(set.isCompleted ? .green : .secondary)
@@ -72,6 +85,17 @@ struct LoggedSetRowView: View {
             .buttonStyle(.plain)
         }
         .padding(.horizontal)
+        .onChange(of: keyboardActions.adjustDelta) { _, delta in
+            guard isFieldFocused, let delta else { return }
+            adjustWeight(by: delta)
+            keyboardActions.adjustDelta = nil
+        }
+        .onChange(of: keyboardActions.shouldComplete) { _, should in
+            guard isFieldFocused, should else { return }
+            completeSet()
+            onCompleted()
+            keyboardActions.shouldComplete = false
+        }
         .onAppear {
             if set.weight > 0 {
                 let val = useKg ? set.weight * 0.453592 : set.weight
@@ -79,6 +103,18 @@ struct LoggedSetRowView: View {
             }
             if set.reps > 0 { repsText = "\(set.reps)" }
         }
+    }
+
+    private func adjustWeight(by delta: Double) {
+        let base = Double(weightText) ?? ghostDisplayWeight ?? 0
+        let newVal = max(0, base + delta)
+        weightText = formatWeight(newVal)
+    }
+
+    private func formatWeight(_ w: Double) -> String {
+        w.truncatingRemainder(dividingBy: 1) == 0
+            ? String(Int(w))
+            : String(format: "%.1f", w)
     }
 
     private func completeSet() {

@@ -1,6 +1,12 @@
 import SwiftUI
 import SwiftData
 
+@Observable
+final class KeyboardActions {
+    var adjustDelta: Double? = nil
+    var shouldComplete: Bool = false
+}
+
 struct ActiveWorkoutView: View {
     @Environment(ActiveWorkoutStore.self) private var store
     @Environment(\.modelContext) private var modelContext
@@ -10,33 +16,57 @@ struct ActiveWorkoutView: View {
     @FocusState private var focusedField: FocusedField?
     @State private var showExercisePicker = false
     @State private var showCancelConfirm = false
+    @State private var exerciseToDelete: WorkoutExercise?
+    @State private var showDeleteConfirm = false
+    @State private var keyboardActions = KeyboardActions()
 
     private var workout: Workout? { store.currentWorkout }
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    // Exercise list
-                    if let workout {
-                        ForEach(workout.sortedExercises) { we in
-                            ExerciseRowView(workoutExercise: we, focusedField: $focusedField)
+            List {
+                if let workout {
+                    ForEach(workout.sortedExercises) { we in
+                        VStack(spacing: 0) {
+                            ExerciseRowView(
+                                workoutExercise: we,
+                                focusedField: $focusedField,
+                                onCompleted: focusFirstIncomplete
+                            )
                             Divider()
                         }
+                        .listRowInsets(EdgeInsets())
+                        .listRowSeparator(.hidden)
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                exerciseToDelete = we
+                                let hasCompleted = (we.sets ?? []).contains { $0.isCompleted }
+                                if hasCompleted {
+                                    showDeleteConfirm = true
+                                } else {
+                                    deleteExercise(we)
+                                    exerciseToDelete = nil
+                                }
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                     }
-
-                    // Add Exercise at end of list
-                    Button {
-                        showExercisePicker = true
-                    } label: {
-                        Label("Add Exercise", systemImage: "plus.circle")
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                    }
-                    .buttonStyle(.bordered)
-                    .padding()
                 }
+
+                Button {
+                    showExercisePicker = true
+                } label: {
+                    Label("Add Exercise", systemImage: "plus.circle")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                }
+                .buttonStyle(.bordered)
+                .padding()
+                .listRowSeparator(.hidden)
             }
+            .listStyle(.plain)
+            .environment(keyboardActions)
 
             // PR celebration overlay — non-blocking
             if let exercise = store.newPRExercise {
@@ -71,6 +101,27 @@ struct ActiveWorkoutView: View {
                     .tint(.accentColor)
             }
         }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if focusedField != nil {
+                HStack(spacing: 0) {
+                    Button("-2.5") { keyboardActions.adjustDelta = -2.5 }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                    Button("+2.5") { keyboardActions.adjustDelta = 2.5 }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                    Spacer()
+                    Button {
+                        keyboardActions.shouldComplete = true
+                    } label: {
+                        Label("Complete", systemImage: "checkmark")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                    }
+                }
+                .background(.bar)
+            }
+        }
         .sheet(isPresented: $showExercisePicker) {
             ExercisePickerView { exercise in
                 addExercise(exercise)
@@ -83,6 +134,17 @@ struct ActiveWorkoutView: View {
             Button("Keep Going", role: .cancel) {}
         } message: {
             Text("Your progress will be lost.")
+        }
+        .confirmationDialog("Delete Exercise?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+            Button("Delete Exercise", role: .destructive) {
+                if let we = exerciseToDelete { deleteExercise(we) }
+                exerciseToDelete = nil
+            }
+            Button("Cancel", role: .cancel) {
+                exerciseToDelete = nil
+            }
+        } message: {
+            Text("Completed sets will be lost.")
         }
         .onAppear {
             focusFirstIncomplete()
@@ -124,6 +186,14 @@ struct ActiveWorkoutView: View {
                 return
             }
         }
+    }
+
+    private func deleteExercise(_ we: WorkoutExercise) {
+        if let sets = we.sets {
+            for s in sets { modelContext.delete(s) }
+        }
+        modelContext.delete(we)
+        try? modelContext.save()
     }
 
     private func finishWorkout() {
