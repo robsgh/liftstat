@@ -89,3 +89,13 @@ struct IdleView: View {
         store.startWorkout(workout, context: modelContext)
     }
 }
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    let store = ActiveWorkoutStore()
+    return NavigationStack {
+        IdleView()
+    }
+    .modelContainer(container)
+    .environment(store)
+}
