@@ -77,3 +77,11 @@ private struct WorkoutCardRow: View {
         .padding(.vertical, 4)
     }
 }
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    return NavigationStack {
+        WorkoutListView()
+    }
+    .modelContainer(container)
+}

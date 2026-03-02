@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import Charts
 
 struct ExerciseHistoryView: View {
@@ -144,4 +145,13 @@ struct ExerciseHistoryView: View {
         .navigationTitle(exercise.name)
         .navigationBarTitleDisplayMode(.large)
     }
+}
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    let exercise = try! container.mainContext.fetch(FetchDescriptor<Exercise>(predicate: #Predicate { $0.name == "Bench Press" })).first!
+    return NavigationStack {
+        ExerciseHistoryView(exercise: exercise)
+    }
+    .modelContainer(container)
 }

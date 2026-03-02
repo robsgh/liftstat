@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct LogWorkoutDetailView: View {
     let workout: Workout
@@ -116,4 +117,13 @@ private struct ExerciseDetailRow: View {
         }
         .padding(.vertical, 4)
     }
+}
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    let workout = try! container.mainContext.fetch(FetchDescriptor<Workout>(predicate: #Predicate { !$0.isActive })).first!
+    return NavigationStack {
+        LogWorkoutDetailView(workout: workout)
+    }
+    .modelContainer(container)
 }

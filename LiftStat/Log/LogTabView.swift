@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct LogTabView: View {
     @State private var selectedTab = 0
@@ -23,4 +24,10 @@ struct LogTabView: View {
             .navigationBarTitleDisplayMode(.large)
         }
     }
+}
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    return LogTabView()
+        .modelContainer(container)
 }

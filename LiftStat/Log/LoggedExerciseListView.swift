@@ -49,3 +49,11 @@ struct LoggedExerciseListView: View {
         }
     }
 }
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    return NavigationStack {
+        LoggedExerciseListView()
+    }
+    .modelContainer(container)
+}
