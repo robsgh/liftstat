@@ -202,3 +202,13 @@ struct ActiveWorkoutView: View {
         onFinish(workout)
     }
 }
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    let store = PreviewHelper.makeActiveStore(container: container)
+    return NavigationStack {
+        ActiveWorkoutView(onFinish: { _ in })
+    }
+    .modelContainer(container)
+    .environment(store)
+}
