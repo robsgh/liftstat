@@ -150,3 +150,11 @@ struct WorkoutSummaryView: View {
         }
     }
 }
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    let ctx = container.mainContext
+    let workout = try! ctx.fetch(FetchDescriptor<Workout>(predicate: #Predicate { !$0.isActive })).first!
+    return WorkoutSummaryView(workout: workout, onDone: {})
+        .modelContainer(container)
+}
