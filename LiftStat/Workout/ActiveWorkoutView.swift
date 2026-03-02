@@ -27,29 +27,6 @@ struct ActiveWorkoutView: View {
                             Divider()
                         }
                     }
-
-                    // Add exercise button
-                    Button {
-                        showExercisePicker = true
-                    } label: {
-                        Label("Add Exercise", systemImage: "plus.circle")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    }
-                    .buttonStyle(.bordered)
-                    .padding()
-
-                    // Finish button
-                    Button {
-                        finishWorkout()
-                    } label: {
-                        Text("Finish Workout")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .padding(.horizontal)
-                    .padding(.bottom, 32)
                 }
             }
 
@@ -58,6 +35,7 @@ struct ActiveWorkoutView: View {
                 PRCelebrationView(exerciseName: exercise.name)
             }
         }
+        .toolbar(.hidden, for: .tabBar)
         .navigationTitle(workout?.programDayName ?? "Freeform Workout")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -65,6 +43,22 @@ struct ActiveWorkoutView: View {
                 Button("Cancel") { showCancelConfirm = true }
                     .foregroundStyle(.red)
             }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Finish") { finishWorkout() }
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            Button {
+                showExercisePicker = true
+            } label: {
+                Label("Add Exercise", systemImage: "plus.circle")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+            }
+            .buttonStyle(.bordered)
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+            .background(.bar)
         }
         .sheet(isPresented: $showExercisePicker) {
             ExercisePickerView { exercise in
