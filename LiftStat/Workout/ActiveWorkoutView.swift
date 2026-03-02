@@ -39,12 +39,19 @@ struct ActiveWorkoutView: View {
         .navigationTitle(workout?.programDayName ?? "Freeform Workout")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { showCancelConfirm = true }
-                    .foregroundStyle(.red)
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    showCancelConfirm = true
+                } label: {
+                    Image(systemName: "xmark")
+                        .fontWeight(.semibold)
+                }
+                .tint(.red)
             }
-            ToolbarItem(placement: .confirmationAction) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button("Finish") { finishWorkout() }
+                    .fontWeight(.semibold)
+                    .tint(.accentColor)
             }
         }
         .safeAreaInset(edge: .bottom) {
@@ -65,11 +72,13 @@ struct ActiveWorkoutView: View {
                 addExercise(exercise)
             }
         }
-        .confirmationDialog("Cancel Workout?", isPresented: $showCancelConfirm, titleVisibility: .visible) {
+        .alert("Cancel Workout?", isPresented: $showCancelConfirm) {
             Button("Cancel Workout", role: .destructive) {
                 store.cancelWorkout(context: modelContext)
             }
             Button("Keep Going", role: .cancel) {}
+        } message: {
+            Text("Your progress will be lost.")
         }
         .onAppear {
             focusFirstIncomplete()
