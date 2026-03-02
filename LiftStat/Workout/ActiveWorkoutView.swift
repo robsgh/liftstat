@@ -17,9 +17,6 @@ struct ActiveWorkoutView: View {
         ZStack(alignment: .bottom) {
             ScrollView {
                 LazyVStack(spacing: 0) {
-                    // Timer header
-                    timerHeader
-
                     // Exercise list
                     if let workout {
                         ForEach(workout.sortedExercises) { we in
@@ -27,6 +24,17 @@ struct ActiveWorkoutView: View {
                             Divider()
                         }
                     }
+
+                    // Add Exercise at end of list
+                    Button {
+                        showExercisePicker = true
+                    } label: {
+                        Label("Add Exercise", systemImage: "plus.circle")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                    }
+                    .buttonStyle(.bordered)
+                    .padding()
                 }
             }
 
@@ -36,7 +44,6 @@ struct ActiveWorkoutView: View {
             }
         }
         .toolbar(.hidden, for: .tabBar)
-        .navigationTitle(workout?.programDayName ?? "Freeform Workout")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -48,24 +55,21 @@ struct ActiveWorkoutView: View {
                 }
                 .tint(.red)
             }
+            ToolbarItem(placement: .principal) {
+                VStack(spacing: 1) {
+                    Text(workout?.programDayName ?? "Freeform Workout")
+                        .font(.headline)
+                    Text(formattedTime)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Finish") { finishWorkout() }
                     .fontWeight(.semibold)
                     .tint(.accentColor)
             }
-        }
-        .safeAreaInset(edge: .bottom) {
-            Button {
-                showExercisePicker = true
-            } label: {
-                Label("Add Exercise", systemImage: "plus.circle")
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-            }
-            .buttonStyle(.bordered)
-            .padding(.horizontal)
-            .padding(.vertical, 8)
-            .background(.bar)
         }
         .sheet(isPresented: $showExercisePicker) {
             ExercisePickerView { exercise in
@@ -83,17 +87,6 @@ struct ActiveWorkoutView: View {
         .onAppear {
             focusFirstIncomplete()
         }
-    }
-
-    private var timerHeader: some View {
-        HStack {
-            Label(formattedTime, systemImage: "timer")
-                .font(.title3.monospacedDigit())
-                .foregroundStyle(.secondary)
-            Spacer()
-        }
-        .padding()
-        .background(.bar)
     }
 
     private var formattedTime: String {

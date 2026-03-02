@@ -9,30 +9,43 @@ struct ProgramDetailView: View {
     @State private var newDayName = ""
 
     var body: some View {
-        List {
-            ForEach(program.sortedDays) { day in
-                NavigationLink {
-                    ProgramDayEditorView(day: day)
-                } label: {
-                    VStack(alignment: .leading) {
-                        Text(day.name)
-                            .font(.headline)
-                        Text("\(day.exercises?.count ?? 0) exercise\((day.exercises?.count ?? 0) == 1 ? "" : "s")")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+        Group {
+            if program.sortedDays.isEmpty {
+                ContentUnavailableView {
+                    Label("No Days", systemImage: "calendar")
+                } description: {
+                    Text("Add days to build out your program.")
+                } actions: {
+                    Button("Add Day") { showAddDay = true }
+                        .buttonStyle(.borderedProminent)
+                }
+            } else {
+                List {
+                    ForEach(program.sortedDays) { day in
+                        NavigationLink {
+                            ProgramDayEditorView(day: day)
+                        } label: {
+                            VStack(alignment: .leading) {
+                                Text(day.name)
+                                    .font(.headline)
+                                Text("\(day.exercises?.count ?? 0) exercise\((day.exercises?.count ?? 0) == 1 ? "" : "s")")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .onDelete { indexSet in
+                        let sorted = program.sortedDays
+                        for index in indexSet { modelContext.delete(sorted[index]) }
+                        try? modelContext.save()
+                    }
+                    .onMove { from, to in
+                        var days = program.sortedDays
+                        days.move(fromOffsets: from, toOffset: to)
+                        for (index, day) in days.enumerated() { day.order = index }
+                        try? modelContext.save()
                     }
                 }
-            }
-            .onDelete { indexSet in
-                let sorted = program.sortedDays
-                for index in indexSet { modelContext.delete(sorted[index]) }
-                try? modelContext.save()
-            }
-            .onMove { from, to in
-                var days = program.sortedDays
-                days.move(fromOffsets: from, toOffset: to)
-                for (index, day) in days.enumerated() { day.order = index }
-                try? modelContext.save()
             }
         }
         .navigationTitle(program.name)

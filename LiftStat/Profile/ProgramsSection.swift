@@ -9,23 +9,36 @@ struct ProgramsSection: View {
     @State private var newProgramName = ""
 
     var body: some View {
-        List {
-            ForEach(programs) { program in
-                NavigationLink {
-                    ProgramDetailView(program: program)
-                } label: {
-                    VStack(alignment: .leading) {
-                        Text(program.name)
-                            .font(.headline)
-                        Text("\(program.days?.count ?? 0) day\((program.days?.count ?? 0) == 1 ? "" : "s")")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+        Group {
+            if programs.isEmpty {
+                ContentUnavailableView {
+                    Label("No Programs", systemImage: "list.clipboard")
+                } description: {
+                    Text("Create a program to plan your workouts.")
+                } actions: {
+                    Button("Create Program") { showAddProgram = true }
+                        .buttonStyle(.borderedProminent)
+                }
+            } else {
+                List {
+                    ForEach(programs) { program in
+                        NavigationLink {
+                            ProgramDetailView(program: program)
+                        } label: {
+                            VStack(alignment: .leading) {
+                                Text(program.name)
+                                    .font(.headline)
+                                Text("\(program.days?.count ?? 0) day\((program.days?.count ?? 0) == 1 ? "" : "s")")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .onDelete { indexSet in
+                        for index in indexSet { modelContext.delete(programs[index]) }
+                        try? modelContext.save()
                     }
                 }
-            }
-            .onDelete { indexSet in
-                for index in indexSet { modelContext.delete(programs[index]) }
-                try? modelContext.save()
             }
         }
         .navigationTitle("Programs")

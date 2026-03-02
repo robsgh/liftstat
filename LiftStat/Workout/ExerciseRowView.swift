@@ -63,7 +63,8 @@ struct ExerciseRowView: View {
 
     private func addSet() {
         let nextOrder = workoutExercise.sets?.count ?? 0
-        let newSet = LoggedSet(order: nextOrder)
+        let lastSet = workoutExercise.sortedSets.last
+        let newSet = LoggedSet(weight: lastSet?.weight ?? 0, reps: lastSet?.reps ?? 0, order: nextOrder)
         newSet.workoutExercise = workoutExercise
         workoutExercise.sets = (workoutExercise.sets ?? []) + [newSet]
         modelContext.insert(newSet)
