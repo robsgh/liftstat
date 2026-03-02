@@ -146,3 +146,22 @@ struct LoggedSetRowView: View {
         try? modelContext.save()
     }
 }
+
+#Preview {
+    @Previewable @FocusState var focus: FocusedField?
+    let container = PreviewHelper.makeContainer()
+    let store = PreviewHelper.makeActiveStore(container: container)
+    let we = store.currentWorkout!.sortedExercises[0]
+    let set = we.sortedSets[0]
+    return LoggedSetRowView(
+        set: set,
+        setNumber: 1,
+        ghostWeight: 135,
+        ghostReps: 5,
+        focusedField: $focus,
+        exercise: we.exercise
+    )
+    .modelContainer(container)
+    .environment(store)
+    .environment(KeyboardActions())
+}
