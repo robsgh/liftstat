@@ -87,3 +87,11 @@ struct ProgramsSection: View {
         newProgramName = ""
     }
 }
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    return NavigationStack {
+        ProgramsSection()
+    }
+    .modelContainer(container)
+}

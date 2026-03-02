@@ -97,3 +97,12 @@ struct ProgramDetailView: View {
         newDayName = ""
     }
 }
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    let program = try! container.mainContext.fetch(FetchDescriptor<Program>()).first!
+    return NavigationStack {
+        ProgramDetailView(program: program)
+    }
+    .modelContainer(container)
+}

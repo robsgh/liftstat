@@ -129,3 +129,11 @@ struct ExerciseLibrarySection: View {
         try? modelContext.save()
     }
 }
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    return NavigationStack {
+        ExerciseLibrarySection()
+    }
+    .modelContainer(container)
+}

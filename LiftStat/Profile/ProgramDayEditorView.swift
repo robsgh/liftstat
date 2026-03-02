@@ -73,3 +73,12 @@ struct ProgramDayEditorView: View {
         try? modelContext.save()
     }
 }
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    let day = try! container.mainContext.fetch(FetchDescriptor<ProgramDay>()).first!
+    return NavigationStack {
+        ProgramDayEditorView(day: day)
+    }
+    .modelContainer(container)
+}

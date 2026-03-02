@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct ProfileTabView: View {
     var body: some View {
@@ -23,4 +24,10 @@ struct ProfileTabView: View {
             .navigationTitle("Profile")
         }
     }
+}
+
+#Preview {
+    let container = PreviewHelper.makeContainer()
+    return ProfileTabView()
+        .modelContainer(container)
 }
