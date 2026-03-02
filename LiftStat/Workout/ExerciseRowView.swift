@@ -74,3 +74,19 @@ struct ExerciseRowView: View {
         focusedField.wrappedValue = .weight(newSet.persistentModelID)
     }
 }
+
+#Preview {
+    @Previewable @FocusState var focus: FocusedField?
+    let container = PreviewHelper.makeContainer()
+    let store = PreviewHelper.makeActiveStore(container: container)
+    let we = store.currentWorkout!.sortedExercises[0]
+    return List {
+        ExerciseRowView(workoutExercise: we, focusedField: $focus)
+            .listRowInsets(EdgeInsets())
+            .listRowSeparator(.hidden)
+    }
+    .listStyle(.plain)
+    .modelContainer(container)
+    .environment(store)
+    .environment(KeyboardActions())
+}
