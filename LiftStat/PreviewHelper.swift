@@ -33,7 +33,7 @@ struct PreviewHelper {
         program.days = [pushDay]
         ctx.insert(program); ctx.insert(pushDay); ctx.insert(pe)
 
-        // Completed past workout: Bench 3×5 @185, Deadlift 2×5 @225
+        // Completed past workout: Bench 3×5 @185 lbs, Deadlift 2×5 @225 lbs
         let past = Workout(startDate: Date().addingTimeInterval(-7200), isActive: false)
         past.endDate = Date().addingTimeInterval(-3600)
 
@@ -41,7 +41,7 @@ struct PreviewHelper {
         let bSets: [LoggedSet] = [
             LoggedSet(weight: 185, reps: 5, isCompleted: true, order: 0),
             LoggedSet(weight: 185, reps: 5, isCompleted: true, order: 1),
-            LoggedSet(weight: 185, reps: 4, isCompleted: true, order: 2)
+            LoggedSet(weight: 185, reps: 5, isCompleted: true, order: 2)
         ]
         bSets.forEach { $0.workoutExercise = weB; ctx.insert($0) }
         weB.sets = bSets
@@ -60,13 +60,14 @@ struct PreviewHelper {
         // PR for Bench
         let pr = PersonalRecord(weight: 185, reps: 5, estimatedOneRepMax: 208.3)
         pr.exercise = bench
+        bench.personalRecords = [pr]
         ctx.insert(pr)
 
         try? ctx.save()
         return container
     }
 
-    /// Returns an ActiveWorkoutStore with a live active workout in the given container.
+    /// Returns an ActiveWorkoutStore with a currentWorkout set (no live timer — avoids leaking background tasks in previews).
     /// The workout contains Barbell Squat (1 completed set + 1 empty) and Bench Press (1 empty set).
     static func makeActiveStore(container: ModelContainer) -> ActiveWorkoutStore {
         let ctx = container.mainContext
@@ -92,7 +93,8 @@ struct PreviewHelper {
         try? ctx.save()
 
         let store = ActiveWorkoutStore()
-        store.resumeWorkout(workout)
+        store.currentWorkout = workout
+        store.elapsedSeconds = 1200
         return store
     }
 }
