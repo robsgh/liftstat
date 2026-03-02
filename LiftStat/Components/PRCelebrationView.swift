@@ -30,3 +30,7 @@ struct PRCelebrationView: View {
         .allowsHitTesting(false)
     }
 }
+
+#Preview {
+    PRCelebrationView(exerciseName: "Barbell Squat")
+}
