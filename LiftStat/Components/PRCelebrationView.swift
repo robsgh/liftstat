@@ -8,7 +8,7 @@ struct PRCelebrationView: View {
             Spacer()
             HStack(spacing: 12) {
                 Image(systemName: "star.fill")
-                    .foregroundStyle(.yellow)
+                    .foregroundStyle(.neonPink)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("New PR!")
                         .font(.headline.bold())
@@ -17,7 +17,7 @@ struct PRCelebrationView: View {
                         .foregroundStyle(.secondary)
                 }
                 Image(systemName: "star.fill")
-                    .foregroundStyle(.yellow)
+                    .foregroundStyle(.neonPink)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 14)

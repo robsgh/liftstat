@@ -33,35 +33,116 @@ struct PreviewHelper {
         program.days = [pushDay]
         ctx.insert(program); ctx.insert(pushDay); ctx.insert(pe)
 
-        // Completed past workout: Bench 3×5 @185 lbs, Deadlift 2×5 @225 lbs
-        let past = Workout(startDate: Date().addingTimeInterval(-7200), isActive: false)
-        past.endDate = Date().addingTimeInterval(-3600)
+        // Workout 1: 3 weeks ago — Bench 3×5 @175, Squat 3×5 @225
+        let w1Date = Date().addingTimeInterval(-21 * 86400)
+        let w1 = Workout(startDate: w1Date, isActive: false)
+        w1.endDate = w1Date.addingTimeInterval(3600)
 
-        let weB = WorkoutExercise(order: 0); weB.exercise = bench; weB.workout = past
-        let bSets: [LoggedSet] = [
+        let w1Bench = WorkoutExercise(order: 0); w1Bench.exercise = bench; w1Bench.workout = w1
+        let w1BenchSets: [LoggedSet] = [
+            LoggedSet(weight: 175, reps: 5, isCompleted: true, order: 0),
+            LoggedSet(weight: 175, reps: 5, isCompleted: true, order: 1),
+            LoggedSet(weight: 175, reps: 5, isCompleted: true, order: 2)
+        ]
+        w1BenchSets.forEach { $0.workoutExercise = w1Bench; ctx.insert($0) }
+        w1Bench.sets = w1BenchSets
+
+        let w1Squat = WorkoutExercise(order: 1); w1Squat.exercise = squat; w1Squat.workout = w1
+        let w1SquatSets: [LoggedSet] = [
+            LoggedSet(weight: 225, reps: 5, isCompleted: true, order: 0),
+            LoggedSet(weight: 225, reps: 5, isCompleted: true, order: 1),
+            LoggedSet(weight: 225, reps: 5, isCompleted: true, order: 2)
+        ]
+        w1SquatSets.forEach { $0.workoutExercise = w1Squat; ctx.insert($0) }
+        w1Squat.sets = w1SquatSets
+
+        w1.exercises = [w1Bench, w1Squat]
+        ctx.insert(w1); ctx.insert(w1Bench); ctx.insert(w1Squat)
+
+        // Workout 2: 2 weeks ago — Bench 3×5 @180, Deadlift 2×5 @275
+        let w2Date = Date().addingTimeInterval(-14 * 86400)
+        let w2 = Workout(startDate: w2Date, isActive: false)
+        w2.endDate = w2Date.addingTimeInterval(3600)
+
+        let w2Bench = WorkoutExercise(order: 0); w2Bench.exercise = bench; w2Bench.workout = w2
+        let w2BenchSets: [LoggedSet] = [
+            LoggedSet(weight: 180, reps: 5, isCompleted: true, order: 0),
+            LoggedSet(weight: 180, reps: 5, isCompleted: true, order: 1),
+            LoggedSet(weight: 180, reps: 5, isCompleted: true, order: 2)
+        ]
+        w2BenchSets.forEach { $0.workoutExercise = w2Bench; ctx.insert($0) }
+        w2Bench.sets = w2BenchSets
+
+        let w2Dead = WorkoutExercise(order: 1); w2Dead.exercise = deadlift; w2Dead.workout = w2
+        let w2DeadSets: [LoggedSet] = [
+            LoggedSet(weight: 275, reps: 5, isCompleted: true, order: 0),
+            LoggedSet(weight: 275, reps: 5, isCompleted: true, order: 1)
+        ]
+        w2DeadSets.forEach { $0.workoutExercise = w2Dead; ctx.insert($0) }
+        w2Dead.sets = w2DeadSets
+
+        w2.exercises = [w2Bench, w2Dead]
+        ctx.insert(w2); ctx.insert(w2Bench); ctx.insert(w2Dead)
+
+        // Workout 3: yesterday — Bench 3×5 @185, Deadlift 2×5 @285, Squat 3×5 @245
+        let w3Date = Date().addingTimeInterval(-86400)
+        let w3 = Workout(startDate: w3Date, isActive: false)
+        w3.endDate = w3Date.addingTimeInterval(4200)
+
+        let w3Bench = WorkoutExercise(order: 0); w3Bench.exercise = bench; w3Bench.workout = w3
+        let w3BenchSets: [LoggedSet] = [
             LoggedSet(weight: 185, reps: 5, isCompleted: true, order: 0),
             LoggedSet(weight: 185, reps: 5, isCompleted: true, order: 1),
             LoggedSet(weight: 185, reps: 5, isCompleted: true, order: 2)
         ]
-        bSets.forEach { $0.workoutExercise = weB; ctx.insert($0) }
-        weB.sets = bSets
+        w3BenchSets.forEach { $0.workoutExercise = w3Bench; ctx.insert($0) }
+        w3Bench.sets = w3BenchSets
 
-        let weD = WorkoutExercise(order: 1); weD.exercise = deadlift; weD.workout = past
-        let dSets: [LoggedSet] = [
-            LoggedSet(weight: 225, reps: 5, isCompleted: true, order: 0),
-            LoggedSet(weight: 225, reps: 5, isCompleted: true, order: 1)
+        let w3Dead = WorkoutExercise(order: 1); w3Dead.exercise = deadlift; w3Dead.workout = w3
+        let w3DeadSets: [LoggedSet] = [
+            LoggedSet(weight: 285, reps: 5, isCompleted: true, order: 0),
+            LoggedSet(weight: 285, reps: 5, isCompleted: true, order: 1)
         ]
-        dSets.forEach { $0.workoutExercise = weD; ctx.insert($0) }
-        weD.sets = dSets
+        w3DeadSets.forEach { $0.workoutExercise = w3Dead; ctx.insert($0) }
+        w3Dead.sets = w3DeadSets
 
-        past.exercises = [weB, weD]
-        ctx.insert(past); ctx.insert(weB); ctx.insert(weD)
+        let w3Squat = WorkoutExercise(order: 2); w3Squat.exercise = squat; w3Squat.workout = w3
+        let w3SquatSets: [LoggedSet] = [
+            LoggedSet(weight: 245, reps: 5, isCompleted: true, order: 0),
+            LoggedSet(weight: 245, reps: 5, isCompleted: true, order: 1),
+            LoggedSet(weight: 245, reps: 5, isCompleted: true, order: 2)
+        ]
+        w3SquatSets.forEach { $0.workoutExercise = w3Squat; ctx.insert($0) }
+        w3Squat.sets = w3SquatSets
 
-        // PR for Bench
-        let pr = PersonalRecord(weight: 185, reps: 5, estimatedOneRepMax: 208.3)
-        pr.exercise = bench
-        bench.personalRecords = [pr]
-        ctx.insert(pr)
+        w3.exercises = [w3Bench, w3Dead, w3Squat]
+        ctx.insert(w3); ctx.insert(w3Bench); ctx.insert(w3Dead); ctx.insert(w3Squat)
+
+        // PRs across exercises and dates
+        let prBench1 = PersonalRecord(weight: 175, reps: 5, estimatedOneRepMax: 204.2, date: w1Date)
+        prBench1.exercise = bench; ctx.insert(prBench1)
+
+        let prBench2 = PersonalRecord(weight: 180, reps: 5, estimatedOneRepMax: 210.0, date: w2Date)
+        prBench2.exercise = bench; ctx.insert(prBench2)
+
+        let prBench3 = PersonalRecord(weight: 185, reps: 5, estimatedOneRepMax: 215.8, date: w3Date)
+        prBench3.exercise = bench; ctx.insert(prBench3)
+
+        let prSquat1 = PersonalRecord(weight: 225, reps: 5, estimatedOneRepMax: 262.5, date: w1Date)
+        prSquat1.exercise = squat; ctx.insert(prSquat1)
+
+        let prSquat2 = PersonalRecord(weight: 245, reps: 5, estimatedOneRepMax: 285.8, date: w3Date)
+        prSquat2.exercise = squat; ctx.insert(prSquat2)
+
+        let prDead1 = PersonalRecord(weight: 275, reps: 5, estimatedOneRepMax: 320.8, date: w2Date)
+        prDead1.exercise = deadlift; ctx.insert(prDead1)
+
+        let prDead2 = PersonalRecord(weight: 285, reps: 5, estimatedOneRepMax: 332.5, date: w3Date)
+        prDead2.exercise = deadlift; ctx.insert(prDead2)
+
+        bench.personalRecords = [prBench1, prBench2, prBench3]
+        squat.personalRecords = [prSquat1, prSquat2]
+        deadlift.personalRecords = [prDead1, prDead2]
 
         try? ctx.save()
         return container

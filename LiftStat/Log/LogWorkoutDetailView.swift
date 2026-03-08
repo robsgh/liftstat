@@ -38,14 +38,14 @@ struct LogWorkoutDetailView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+                .cardBackground()
 
                 // PRs section
                 if !prsSet.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         Label("Personal Records", systemImage: "star.fill")
                             .font(.headline)
-                            .foregroundStyle(.yellow)
+                            .foregroundStyle(.neonPink)
                         ForEach(prsSet) { pr in
                             HStack {
                                 Text(pr.exercise?.name ?? "")
@@ -59,7 +59,7 @@ struct LogWorkoutDetailView: View {
                         }
                     }
                     .padding()
-                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+                    .cardBackground()
                 }
 
                 // Exercise list

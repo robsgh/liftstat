@@ -35,7 +35,7 @@ struct ExerciseLibrarySection: View {
                                                 .foregroundStyle(.secondary)
                                                 .padding(.horizontal, 6)
                                                 .padding(.vertical, 2)
-                                                .background(.quaternary, in: Capsule())
+                                                .background(Color.accentColor.opacity(0.08), in: Capsule())
                                         } else {
                                             Text(equipment.displayName)
                                                 .font(.caption)

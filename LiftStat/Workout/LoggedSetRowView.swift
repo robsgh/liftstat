@@ -24,17 +24,17 @@ struct LoggedSetRowView: View {
 
     private var useKg: Bool { UserDefaults.standard.bool(forKey: "useKilograms") }
 
-    private var weightPrompt: String {
+    private var weightPromptText: Text {
         if let g = ghostWeight, g > 0 {
             let val = useKg ? g * 0.453592 : g
-            return String(format: "%.0f", val)
+            return Text(String(format: "%.0f", val)).foregroundStyle(.secondary)
         }
-        return useKg ? "kg" : "lbs"
+        return Text(useKg ? "kg" : "lbs").foregroundStyle(.tertiary)
     }
 
-    private var repsPrompt: String {
-        if let g = ghostReps, g > 0 { return "\(g)" }
-        return "reps"
+    private var repsPromptText: Text {
+        if let g = ghostReps, g > 0 { return Text("\(g)").foregroundStyle(.secondary) }
+        return Text("reps").foregroundStyle(.tertiary)
     }
 
     private var ghostDisplayWeight: Double? {
@@ -60,7 +60,7 @@ struct LoggedSetRowView: View {
                 .foregroundStyle(.secondary)
                 .frame(width: 24, alignment: .center)
 
-            TextField("", text: $weightText, prompt: Text(weightPrompt).foregroundStyle(.tertiary))
+            TextField("", text: $weightText, prompt: weightPromptText)
                 .keyboardType(.decimalPad)
                 .focused(focusedField, equals: .weight(set.persistentModelID))
                 .frame(maxWidth: .infinity)
@@ -73,7 +73,7 @@ struct LoggedSetRowView: View {
             Text("×")
                 .foregroundStyle(.secondary)
 
-            TextField("", text: $repsText, prompt: Text(repsPrompt).foregroundStyle(.tertiary))
+            TextField("", text: $repsText, prompt: repsPromptText)
                 .keyboardType(.numberPad)
                 .focused(focusedField, equals: .reps(set.persistentModelID))
                 .frame(maxWidth: .infinity)
@@ -85,7 +85,7 @@ struct LoggedSetRowView: View {
                 onCompleted()
             } label: {
                 Image(systemName: set.isCompleted ? "checkmark.circle.fill" : (hasGhostValues ? "checkmark.circle.dotted" : "circle"))
-                    .foregroundStyle(set.isCompleted ? .green : (hasGhostValues ? .orange : .secondary))
+                    .foregroundStyle(set.isCompleted ? .electricCyan : (hasGhostValues ? .orange : .secondary))
                     .font(.title3)
             }
             .buttonStyle(.plain)

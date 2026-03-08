@@ -60,7 +60,7 @@ struct ExerciseHistoryView: View {
                     HStack {
                         Label("All-Time PR", systemImage: "star.fill")
                             .font(.subheadline.bold())
-                            .foregroundStyle(.yellow)
+                            .foregroundStyle(.neonPink)
                         Spacer()
                         Text("\(best.weight.displayWeight) × \(best.reps)")
                             .font(.subheadline)
@@ -70,7 +70,7 @@ struct ExerciseHistoryView: View {
                             .foregroundStyle(.tertiary)
                     }
                     .padding()
-                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+                    .cardBackground()
                 }
 
                 // Chart
@@ -91,13 +91,13 @@ struct ExerciseHistoryView: View {
                                         x: .value("Date", session.date),
                                         y: .value(chartMetric.rawValue, value)
                                     )
-                                    .foregroundStyle(.blue)
+                                    .foregroundStyle(Color.accentColor)
                                 }
                                 PointMark(
                                     x: .value("Date", session.date),
                                     y: .value(chartMetric.rawValue, value)
                                 )
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(Color.accentColor)
                             }
                         }
                         .chartXAxis {
@@ -110,7 +110,7 @@ struct ExerciseHistoryView: View {
                         .frame(height: 200)
                     }
                     .padding()
-                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+                    .cardBackground()
                 }
 
                 // Session list

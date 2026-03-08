@@ -64,7 +64,7 @@ private struct WorkoutCardRow: View {
                 if prCount > 0 {
                     Label("\(prCount)", systemImage: "star.fill")
                         .font(.caption.bold())
-                        .foregroundStyle(.yellow)
+                        .foregroundStyle(.neonPink)
                 }
             }
             if !exerciseNames.isEmpty {

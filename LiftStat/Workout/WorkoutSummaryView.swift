@@ -42,14 +42,14 @@ struct WorkoutSummaryView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+                    .cardBackground()
 
                     // PRs section
                     if !prsSet.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Label("Personal Records", systemImage: "star.fill")
                                 .font(.headline)
-                                .foregroundStyle(.yellow)
+                                .foregroundStyle(.neonPink)
                             ForEach(prsSet) { pr in
                                 HStack {
                                     Text(pr.exercise?.name ?? "")
@@ -63,7 +63,7 @@ struct WorkoutSummaryView: View {
                             }
                         }
                         .padding()
-                        .background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+                        .cardBackground()
                     }
 
                     // Per-exercise breakdown
@@ -145,7 +145,7 @@ struct WorkoutSummaryView: View {
                     Text("\(abs(diff).displayWeight) vs last session")
                         .font(.caption)
                 }
-                .foregroundStyle(diff > 0 ? .green : .red)
+                .foregroundStyle(diff > 0 ? .electricCyan : .red)
             }
         }
     }
