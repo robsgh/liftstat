@@ -3,7 +3,6 @@ import SwiftData
 
 @Observable
 final class KeyboardActions {
-    var adjustDelta: Double? = nil
     var shouldComplete: Bool = false
     var shouldFillGhost: Bool = false
 }
@@ -105,12 +104,6 @@ struct ActiveWorkoutView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             if focusedField != nil {
                 HStack(spacing: 0) {
-                    Button("-2.5") { keyboardActions.adjustDelta = -2.5 }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                    Button("+2.5") { keyboardActions.adjustDelta = 2.5 }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
                     Button {
                         keyboardActions.shouldFillGhost = true
                     } label: {

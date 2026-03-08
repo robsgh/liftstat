@@ -91,11 +91,6 @@ struct LoggedSetRowView: View {
             .buttonStyle(.plain)
         }
         .padding(.horizontal)
-        .onChange(of: keyboardActions.adjustDelta) { _, delta in
-            guard isFieldFocused, let delta else { return }
-            adjustWeight(by: delta)
-            keyboardActions.adjustDelta = nil
-        }
         .onChange(of: keyboardActions.shouldComplete) { _, should in
             guard isFieldFocused, should else { return }
             completeSet()
@@ -124,18 +119,6 @@ struct LoggedSetRowView: View {
             }
             if set.reps > 0 { repsText = "\(set.reps)" }
         }
-    }
-
-    private func adjustWeight(by delta: Double) {
-        let base = Double(weightText) ?? ghostDisplayWeight ?? 0
-        let newVal = max(0, base + delta)
-        weightText = formatWeight(newVal)
-    }
-
-    private func formatWeight(_ w: Double) -> String {
-        w.truncatingRemainder(dividingBy: 1) == 0
-            ? String(Int(w))
-            : String(format: "%.1f", w)
     }
 
     private func fillGhostValues() {
