@@ -3,9 +3,21 @@ import SwiftData
 
 struct ExerciseRowView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(ActiveWorkoutStore.self) private var store
     @Bindable var workoutExercise: WorkoutExercise
     var focusedField: FocusState<FocusedField?>.Binding
     var onCompleted: () -> Void = {}
+
+    private var useKg: Bool { UserDefaults.standard.bool(forKey: "useKilograms") }
+
+    private var incompleteWithGhosts: [(LoggedSet, Double, Int)] {
+        workoutExercise.sortedSets.enumerated().compactMap { index, set in
+            guard !set.isCompleted else { return nil }
+            let ghost = lastSets.indices.contains(index) ? lastSets[index] : lastSets.last
+            guard let gw = ghost?.weight, gw > 0, let gr = ghost?.reps, gr > 0 else { return nil }
+            return (set, gw, gr)
+        }
+    }
 
     private var lastSets: [LoggedSet] {
         let exercise = workoutExercise.exercise
@@ -23,6 +35,13 @@ struct ExerciseRowView: View {
                     .font(.headline)
                     .padding(.horizontal)
                 Spacer()
+                if incompleteWithGhosts.count >= 2 {
+                    Button("Complete All") {
+                        completeAllSets()
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+                }
                 Button {
                     addSet()
                 } label: {
@@ -61,6 +80,25 @@ struct ExerciseRowView: View {
             .buttonStyle(.plain)
         }
         .padding(.vertical, 8)
+    }
+
+    private func completeAllSets() {
+        for (set, ghostWeight, ghostReps) in incompleteWithGhosts {
+            set.weight = ghostWeight
+            set.reps = ghostReps
+            set.isCompleted = true
+
+            if let exercise = workoutExercise.exercise, ghostWeight > 0, ghostReps > 0 {
+                let isPR = PRDetectionService.checkAndRecordPR(
+                    exercise: exercise,
+                    weight: ghostWeight,
+                    reps: ghostReps,
+                    context: modelContext
+                )
+                if isPR { store.triggerPRCelebration(for: exercise) }
+            }
+        }
+        try? modelContext.save()
     }
 
     private func addSet() {

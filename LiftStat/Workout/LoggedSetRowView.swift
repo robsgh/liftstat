@@ -47,6 +47,12 @@ struct LoggedSetRowView: View {
         focusedField.wrappedValue == .reps(set.persistentModelID)
     }
 
+    private var hasGhostValues: Bool {
+        !set.isCompleted &&
+        weightText.isEmpty && repsText.isEmpty &&
+        (ghostWeight ?? 0) > 0 && (ghostReps ?? 0) > 0
+    }
+
     var body: some View {
         HStack(spacing: 12) {
             Text("\(setNumber)")
@@ -78,8 +84,8 @@ struct LoggedSetRowView: View {
                 completeSet()
                 onCompleted()
             } label: {
-                Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(set.isCompleted ? .green : .secondary)
+                Image(systemName: set.isCompleted ? "checkmark.circle.fill" : (hasGhostValues ? "checkmark.circle.dotted" : "circle"))
+                    .foregroundStyle(set.isCompleted ? .green : (hasGhostValues ? .orange : .secondary))
                     .font(.title3)
             }
             .buttonStyle(.plain)
@@ -95,6 +101,21 @@ struct LoggedSetRowView: View {
             completeSet()
             onCompleted()
             keyboardActions.shouldComplete = false
+        }
+        .onChange(of: keyboardActions.shouldFillGhost) { _, should in
+            guard isFieldFocused, should else { return }
+            fillGhostValues()
+            keyboardActions.shouldFillGhost = false
+        }
+        .onChange(of: set.isCompleted) { _, isCompleted in
+            guard isCompleted else { return }
+            if set.weight > 0 && weightText.isEmpty {
+                let val = useKg ? set.weight * 0.453592 : set.weight
+                weightText = String(format: "%.0f", val)
+            }
+            if set.reps > 0 && repsText.isEmpty {
+                repsText = "\(set.reps)"
+            }
         }
         .onAppear {
             if set.weight > 0 {
@@ -115,6 +136,16 @@ struct LoggedSetRowView: View {
         w.truncatingRemainder(dividingBy: 1) == 0
             ? String(Int(w))
             : String(format: "%.1f", w)
+    }
+
+    private func fillGhostValues() {
+        if weightText.isEmpty, let g = ghostWeight, g > 0 {
+            let val = useKg ? g * 0.453592 : g
+            weightText = String(format: "%.0f", val)
+        }
+        if repsText.isEmpty, let g = ghostReps, g > 0 {
+            repsText = "\(g)"
+        }
     }
 
     private func completeSet() {

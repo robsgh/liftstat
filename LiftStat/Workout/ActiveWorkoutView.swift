@@ -5,6 +5,7 @@ import SwiftData
 final class KeyboardActions {
     var adjustDelta: Double? = nil
     var shouldComplete: Bool = false
+    var shouldFillGhost: Bool = false
 }
 
 struct ActiveWorkoutView: View {
@@ -110,7 +111,13 @@ struct ActiveWorkoutView: View {
                     Button("+2.5") { keyboardActions.adjustDelta = 2.5 }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
-                    Spacer()
+                    Button {
+                        keyboardActions.shouldFillGhost = true
+                    } label: {
+                        Label("Fill", systemImage: "arrow.uturn.backward")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                    }
                     Button {
                         keyboardActions.shouldComplete = true
                     } label: {
