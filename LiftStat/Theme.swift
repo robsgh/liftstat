@@ -16,8 +16,8 @@ extension ShapeStyle where Self == Color {
 extension View {
     func cardBackground() -> some View {
         self.background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.accentColor.opacity(0.08))
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.accentColor.opacity(0.25))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(Color.accentColor.opacity(0.15), lineWidth: 1)

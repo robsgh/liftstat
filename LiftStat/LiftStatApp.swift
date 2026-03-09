@@ -27,13 +27,9 @@ struct LiftStatApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            DashboardView()
                 .environment(store)
-                .onAppear {
-                    let context = sharedModelContainer.mainContext
-                    SeedDataService.seedIfNeeded(context: context)
-                    recoverActiveWorkout(context: context)
-                }
+
         }
         .modelContainer(sharedModelContainer)
     }

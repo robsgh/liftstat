@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-struct DashboardView: View {
+struct LogDashboardView: View {
     @Query(sort: \PersonalRecord.date, order: .reverse)
     private var allPRs: [PersonalRecord]
 
@@ -202,7 +202,7 @@ struct DashboardView: View {
 #Preview {
     let container = PreviewHelper.makeContainer()
     return NavigationStack {
-        DashboardView()
+        LogDashboardView()
             .navigationTitle("Dashboard")
             .navigationBarTitleDisplayMode(.large)
     }

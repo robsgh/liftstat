@@ -18,7 +18,7 @@ struct HomeView: View {
                     self.completedWorkout = finishedWorkout
                 }
             } else {
-                DashboardView()
+                LogDashboardView()
                     .navigationTitle("LiftStat")
                     .navigationBarTitleDisplayMode(.large)
                     .toolbar {
