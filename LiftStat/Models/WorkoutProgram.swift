@@ -6,11 +6,13 @@
 //
 
 import SwiftData
+import Foundation
 
 @Model
 class WorkoutProgram {
     var name: String
     var note: String
+    var timestamp: TimeInterval
     
     @Relationship(deleteRule: .cascade, inverse: \WorkoutProgramDay.program)
     var days: [WorkoutProgramDay]?
@@ -18,6 +20,7 @@ class WorkoutProgram {
     init(name: String, note: String = "") {
         self.name = name
         self.note = note
+        self.timestamp = Date().timeIntervalSince1970
     }
     
     var getDaysSorted: [WorkoutProgramDay] {
