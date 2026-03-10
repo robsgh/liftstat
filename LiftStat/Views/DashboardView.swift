@@ -27,7 +27,7 @@ struct DashboardView: View {
             .controlSize(.large)
             .padding(.all, 10)
         }.sheet(isPresented: $showStartWorkoutSheet) {
-            StartWorkoutView()
+            StartWorkoutSheet()
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
         }

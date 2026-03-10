@@ -8,14 +8,26 @@
 import SwiftData
 import SwiftUI
 
-struct StartWorkoutView: View {
-    @Query var programs: [WorkoutProgram]
+struct StartWorkoutSheet: View {
+    @Query(sort: \WorkoutProgram.timestamp) var programs: [WorkoutProgram]
+    @State private var selection: Int = 0
 
     var body: some View {
-        if programs.isEmpty {
+        let freeformNote =
+            if programs.isEmpty {
+                Text(
+                    "You haven't created any programs yet, but you can still workout with a freeform workout!"
+                )
+            } else {
+                Text("Who needs a program anyway?")
+            }
+        TabView(selection: $selection) {
+            // MARK: Default Freeform Workout Option
             VStack {
                 Text("Freeform Workout").font(.title.bold())
-                Text("No programs set yet, so this one will be ad-hoc").font(.subheadline)
+                freeformNote.font(
+                    .subheadline
+                ).padding(.horizontal, 40)
                 Divider().padding()
                 Button {
                     //dismiss()
@@ -30,32 +42,38 @@ struct StartWorkoutView: View {
                 .controlSize(.large)
                 .padding(.all, 10)
             }
-        } else {
-            TabView {
-                ForEach(programs.sorted { $0.timestamp < $1.timestamp }) {
-                    program in
-                    VStack {
-                        Text("\(program.name)").font(.title.bold())
-                        Text("\(program.note)").font(.subheadline)
-                        Divider().padding()
-                        ForEach(program.getDaysSorted) {
-                            programDay in
-                            Button {
-                                //dismiss()
-                            } label: {
-                                Label(
-                                    "Start \(programDay.name) Day",
-                                    systemImage: "dumbbell.fill"
-                                )
-                                .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.large)
-                            .padding(.all, 10)
+            .tag(0)
+            
+            // MARK: Programs and Exercises
+            ForEach(
+                Array(programs.enumerated()),
+                id: \.element.persistentModelID
+            ) { index, program in
+                VStack {
+                    Text("\(program.name)").font(.title.bold())
+                    Text("\(program.note)").font(.subheadline)
+                    Divider().padding()
+                    ForEach(program.getDaysSorted) { programDay in
+                        Button {
+                            //dismiss()
+                        } label: {
+                            Label(
+                                "Start \(programDay.name) Day",
+                                systemImage: "dumbbell.fill"
+                            )
+                            .frame(maxWidth: .infinity)
                         }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                        .padding(.all, 10)
                     }
                 }
-            }.tabViewStyle(.page(indexDisplayMode: .automatic))
+                .tag(index + 1)
+            }
+        }
+        .tabViewStyle(.page(indexDisplayMode: .automatic))
+        .onAppear {
+            selection = programs.isEmpty ? 0 : 1
         }
     }
 }
@@ -68,7 +86,7 @@ struct StartWorkoutView: View {
     )
 
     return Color.clear.sheet(isPresented: .constant(true)) {
-        StartWorkoutView()
+        StartWorkoutSheet()
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
     }.modelContainer(container)
@@ -107,7 +125,7 @@ struct StartWorkoutView: View {
     container.mainContext.insert(upperLower)
 
     return Color.clear.sheet(isPresented: .constant(true)) {
-        StartWorkoutView()
+        StartWorkoutSheet()
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
     }.modelContainer(container)
