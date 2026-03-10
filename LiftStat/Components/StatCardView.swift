@@ -13,9 +13,9 @@ struct StatCardView: View {
 
     var body: some View {
         VStack {
-            Text(self.metric).font(.largeTitle.bold())
+            Text(self.metric).font(.title.bold())
             Text(self.title).font(.title3).fontWeight(.light)
-        }.padding(.all, 10).cardBackground()
+        }.padding(.all, 10)
     }
 }
 
