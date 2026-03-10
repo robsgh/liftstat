@@ -8,14 +8,24 @@
 import SwiftUI
 
 struct DashboardView: View {
-    @State private var isSheet: Bool = true
+    @State private var showStartWorkoutSheet: Bool = false
     var body: some View {
         ScrollView {
             VStack {
                 overviewStatsCard
             }
-        }.sheet(isPresented: $isSheet) {
-            StartWorkoutSheetView()
+        }.safeAreaInset(edge: .bottom) {
+            Button {
+                $showStartWorkoutSheet.wrappedValue.toggle()
+                } label: {
+                    Label("Start Workout", systemImage: "plus.circle.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .padding(.all, 10)
+        }.sheet(isPresented: $showStartWorkoutSheet) {
+            StartWorkoutView()
                 .presentationDetents([.fraction(0.25)])
                 .presentationDragIndicator(.visible)
         }
